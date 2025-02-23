@@ -1,7 +1,16 @@
 
 import React from 'react';
+import { ExternalLink, Share2 } from 'lucide-react';
 
 const HeroSection = () => {
+  const redirectToChatGPT = () => {
+    window.location.href = 'https://chat.openai.com';
+  };
+
+  const redirectToTelegram = () => {
+    window.location.href = 'https://t.me/MOINVIPDDOS';
+  };
+
   return (
     <div className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white pointer-events-none" />
@@ -16,11 +25,19 @@ const HeroSection = () => {
           Explore our curated collection of chatbots designed to enhance your digital experience
         </p>
         <div className="flex justify-center gap-4 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-          <button className="px-8 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-colors">
+          <button 
+            onClick={redirectToChatGPT}
+            className="flex items-center gap-2 px-8 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-colors"
+          >
+            <ExternalLink className="w-5 h-5" />
             Explore Bots
           </button>
-          <button className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium border border-gray-200 hover:bg-gray-50 transition-colors">
-            Learn More
+          <button 
+            onClick={redirectToTelegram}
+            className="flex items-center gap-2 px-8 py-3 bg-white text-gray-900 rounded-full font-medium border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <Share2 className="w-5 h-5" />
+            Join Telegram
           </button>
         </div>
       </div>
