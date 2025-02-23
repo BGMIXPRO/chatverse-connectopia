@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Settings } from 'lucide-react';
 import HeroSection from '@/components/HeroSection';
 import ChatbotCard from '@/components/ChatbotCard';
 import CategoryFilter from '@/components/CategoryFilter';
@@ -39,6 +41,7 @@ const CHATBOTS = [
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const navigate = useNavigate();
 
   const filteredChatbots = CHATBOTS.filter(
     (bot) => selectedCategory === 'all' || bot.category === selectedCategory
@@ -46,6 +49,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="fixed top-4 right-4 z-50">
+        <button
+          onClick={() => navigate('/settings')}
+          className="p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-colors shadow-lg hover-lift"
+          aria-label="Settings"
+        >
+          <Settings className="w-6 h-6 text-gray-700" />
+        </button>
+      </div>
+      
       <HeroSection />
       
       <main className="container px-4 py-16 mx-auto">
