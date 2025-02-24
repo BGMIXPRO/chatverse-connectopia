@@ -1,11 +1,13 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Settings, Home, Star, MessageSquare } from 'lucide-react';
+import { Settings, Home, Star, MessageSquare, Shield } from 'lucide-react';
 import HeroSection from '@/components/HeroSection';
+import AdminPanel from '@/components/AdminPanel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -13,6 +15,10 @@ const Index = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [password, setPassword] = useState('');
+  const [feedbackList, setFeedbackList] = useState<Array<{rating: number; feedback: string; timestamp: string;}>>([]);
 
   const redirectToChatGPT = () => {
     window.location.href = 'https://chat.openai.com';
@@ -28,8 +34,13 @@ const Index = () => {
       return;
     }
 
-    // Here you would typically send the feedback to your backend
-    console.log({ rating, feedback });
+    const newFeedback = {
+      rating,
+      feedback,
+      timestamp: new Date().toLocaleString(),
+    };
+    
+    setFeedbackList([...feedbackList, newFeedback]);
     
     toast({
       title: "Thank you for your feedback!",
@@ -41,9 +52,30 @@ const Index = () => {
     setFeedback('');
   };
 
+  const handleAdminAccess = () => {
+    if (password === 'frontman') {
+      setIsPasswordDialogOpen(false);
+      setIsAdminOpen(true);
+      setPassword('');
+    } else {
+      toast({
+        title: "Access Denied",
+        description: "Incorrect password",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
+        <button
+          onClick={() => setIsPasswordDialogOpen(true)}
+          className="p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-colors shadow-lg hover-lift"
+          aria-label="Admin"
+        >
+          <Shield className="w-6 h-6 text-gray-700" />
+        </button>
         <button
           onClick={() => navigate('/settings')}
           className="p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-colors shadow-lg hover-lift"
@@ -115,6 +147,52 @@ const Index = () => {
               Submit Feedback
             </button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Admin Access</DialogTitle>
+            <DialogDescription>
+              Enter password to access admin panel
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <Input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleAdminAccess();
+                }
+              }}
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={handleAdminAccess}
+                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Access
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAdminOpen} onOpenChange={setIsAdminOpen}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>Admin Panel</DialogTitle>
+            <DialogDescription>
+              View all user feedback
+            </DialogDescription>
+          </DialogHeader>
+          
+          <AdminPanel feedbackList={feedbackList} />
         </DialogContent>
       </Dialog>
     </div>
