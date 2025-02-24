@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Edit2, MessageSquare } from 'lucide-react';
@@ -76,10 +75,10 @@ const AdminPanel = ({ feedbackList, messages, onSendMessage }: AdminPanelProps) 
         <h2 className="text-2xl font-bold">Admin Panel</h2>
         <button
           onClick={handleEditToggle}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-colors ${
             isEditMode 
               ? 'bg-red-100 text-red-700 hover:bg-red-200' 
-              : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+              : 'bg-[#007AFF]/10 text-[#007AFF] hover:bg-[#007AFF]/20'
           }`}
         >
           <Edit2 className="w-4 h-4" />
@@ -88,9 +87,9 @@ const AdminPanel = ({ feedbackList, messages, onSendMessage }: AdminPanelProps) 
       </div>
 
       <Tabs defaultValue="feedback">
-        <TabsList className="mb-4">
-          <TabsTrigger value="feedback">Feedback</TabsTrigger>
-          <TabsTrigger value="messages" className="flex items-center gap-2">
+        <TabsList className="mb-4 bg-[#F2F2F7] p-1 rounded-xl">
+          <TabsTrigger value="feedback" className="rounded-lg data-[state=active]:bg-white">Feedback</TabsTrigger>
+          <TabsTrigger value="messages" className="rounded-lg data-[state=active]:bg-white flex items-center gap-2">
             Messages
             {messages.some(m => !m.isRead && m.sender === 'user') && (
               <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -101,7 +100,7 @@ const AdminPanel = ({ feedbackList, messages, onSendMessage }: AdminPanelProps) 
         </TabsList>
         
         <TabsContent value="feedback">
-          <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+          <ScrollArea className="h-[400px] w-full rounded-xl border p-4">
             {feedbackList.map((item, index) => (
               <div key={index} className="mb-6 pb-6 border-b last:border-0">
                 <div className="flex items-center gap-2 mb-2">
@@ -127,7 +126,7 @@ const AdminPanel = ({ feedbackList, messages, onSendMessage }: AdminPanelProps) 
 
         <TabsContent value="messages">
           <div className="h-[400px] flex flex-col">
-            <ScrollArea className="flex-1 p-4 border rounded-md mb-4">
+            <ScrollArea className="flex-1 p-4 border rounded-xl mb-4">
               {messages.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
@@ -137,11 +136,11 @@ const AdminPanel = ({ feedbackList, messages, onSendMessage }: AdminPanelProps) 
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1"
+                className="flex-1 rounded-xl bg-[#F2F2F7] border-0 focus:ring-2 focus:ring-[#007AFF]"
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 bg-[#007AFF] text-white rounded-xl hover:bg-[#0051FF] transition-colors"
               >
                 Send
               </button>

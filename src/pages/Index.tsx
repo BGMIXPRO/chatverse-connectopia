@@ -107,11 +107,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-[#F2F2F7]">
       <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
         <button
           onClick={() => setIsChatOpen(true)}
-          className="p-3 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
+          className="p-3 rounded-full bg-[#007AFF] text-white hover:bg-[#0051FF] transition-colors shadow-lg hover:shadow-xl"
           aria-label="Chat"
         >
           <MessageSquare className="w-6 h-6" />
@@ -121,17 +121,17 @@ const Index = () => {
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <button
           onClick={() => setIsPasswordDialogOpen(true)}
-          className="p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-colors shadow-lg hover-lift"
+          className="p-2 rounded-full bg-white/80 backdrop-blur-xl hover:bg-white/90 transition-colors shadow-lg hover-lift"
           aria-label="Admin"
         >
-          <Shield className="w-6 h-6 text-gray-700" />
+          <Shield className="w-6 h-6 text-[#007AFF]" />
         </button>
         <button
           onClick={() => navigate('/settings')}
-          className="p-2 rounded-full bg-white/70 backdrop-blur-sm hover:bg-white/90 transition-colors shadow-lg hover-lift"
+          className="p-2 rounded-full bg-white/80 backdrop-blur-xl hover:bg-white/90 transition-colors shadow-lg hover-lift"
           aria-label="Settings"
         >
-          <Settings className="w-6 h-6 text-gray-700" />
+          <Settings className="w-6 h-6 text-[#007AFF]" />
         </button>
       </div>
       
@@ -141,7 +141,7 @@ const Index = () => {
         <div className="flex flex-col items-center gap-6">
           <button
             onClick={redirectToChatGPT}
-            className="flex items-center gap-3 px-8 py-4 bg-black text-white rounded-lg text-xl font-semibold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-transform duration-200"
+            className="flex items-center gap-3 px-8 py-4 bg-[#007AFF] text-white rounded-xl text-xl font-semibold hover:bg-[#0051FF] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-transform duration-200"
           >
             <Home className="w-6 h-6" />
             Home
@@ -149,7 +149,7 @@ const Index = () => {
 
           <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 text-[#007AFF] hover:text-[#0051FF] transition-colors"
           >
             <MessageSquare className="w-5 h-5" />
             Send Feedback
@@ -158,10 +158,10 @@ const Index = () => {
       </main>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-white/80 backdrop-blur-xl rounded-2xl border-0">
           <DialogHeader>
-            <DialogTitle>Send Feedback</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-semibold">Send Feedback</DialogTitle>
+            <DialogDescription className="text-[#8E8E93]">
               How would you rate your experience?
             </DialogDescription>
           </DialogHeader>
@@ -175,7 +175,7 @@ const Index = () => {
               >
                 <Star
                   className={`w-8 h-8 ${
-                    star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                    star <= rating ? 'fill-[#FFB340] text-[#FFB340]' : 'text-[#D1D1D6]'
                   }`}
                 />
               </button>
@@ -186,13 +186,13 @@ const Index = () => {
             placeholder="Tell us about your experience (optional)"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
-            className="min-h-[100px]"
+            className="min-h-[100px] rounded-xl bg-[#F2F2F7] border-0 focus:ring-2 focus:ring-[#007AFF]"
           />
 
           <div className="flex justify-end mt-4">
             <button
               onClick={handleSubmitFeedback}
-              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              className="px-6 py-3 bg-[#007AFF] text-white rounded-xl font-medium hover:bg-[#0051FF] transition-colors"
             >
               Submit Feedback
             </button>
@@ -201,10 +201,10 @@ const Index = () => {
       </Dialog>
 
       <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-white/80 backdrop-blur-xl rounded-2xl border-0">
           <DialogHeader>
-            <DialogTitle>Admin Access</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-semibold">Admin Access</DialogTitle>
+            <DialogDescription className="text-[#8E8E93]">
               Enter password to access admin panel
             </DialogDescription>
           </DialogHeader>
@@ -220,11 +220,12 @@ const Index = () => {
                   handleAdminAccess();
                 }
               }}
+              className="rounded-xl bg-[#F2F2F7] border-0 focus:ring-2 focus:ring-[#007AFF]"
             />
             <div className="flex justify-end">
               <button
                 onClick={handleAdminAccess}
-                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                className="px-6 py-3 bg-[#007AFF] text-white rounded-xl font-medium hover:bg-[#0051FF] transition-colors"
               >
                 Access
               </button>
@@ -234,10 +235,10 @@ const Index = () => {
       </Dialog>
 
       <Dialog open={isAdminOpen} onOpenChange={setIsAdminOpen}>
-        <DialogContent className="sm:max-w-[700px]">
+        <DialogContent className="sm:max-w-[700px] bg-white/80 backdrop-blur-xl rounded-2xl border-0">
           <DialogHeader>
-            <DialogTitle>Admin Panel</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-semibold">Admin Panel</DialogTitle>
+            <DialogDescription className="text-[#8E8E93]">
               Manage feedback and messages
             </DialogDescription>
           </DialogHeader>
@@ -251,16 +252,16 @@ const Index = () => {
       </Dialog>
 
       <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[400px] bg-white/80 backdrop-blur-xl rounded-2xl border-0">
           <DialogHeader>
-            <DialogTitle>Chat with Support</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-semibold">Chat with Support</DialogTitle>
+            <DialogDescription className="text-[#8E8E93]">
               Send us a message and we'll get back to you
             </DialogDescription>
           </DialogHeader>
           
           <div className="h-[400px] flex flex-col">
-            <ScrollArea className="flex-1 p-4 border rounded-md mb-4">
+            <ScrollArea className="flex-1 p-4 border rounded-xl mb-4">
               {messages.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
@@ -270,11 +271,11 @@ const Index = () => {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1"
+                className="flex-1 rounded-xl bg-[#F2F2F7] border-0 focus:ring-2 focus:ring-[#007AFF]"
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                className="px-4 py-2 bg-[#007AFF] text-white rounded-xl hover:bg-[#0051FF] transition-colors"
               >
                 Send
               </button>
