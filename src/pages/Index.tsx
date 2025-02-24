@@ -6,8 +6,11 @@ import HeroSection from '@/components/HeroSection';
 import AdminPanel from '@/components/AdminPanel';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { Message } from '@/components/ChatMessage';
+import ChatMessage from '@/components/ChatMessage';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -17,8 +20,11 @@ const Index = () => {
   const [feedback, setFeedback] = useState('');
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [password, setPassword] = useState('');
+  const [newMessage, setNewMessage] = useState('');
   const [feedbackList, setFeedbackList] = useState<Array<{rating: number; feedback: string; timestamp: string;}>>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const redirectToChatGPT = () => {
     window.location.href = 'https://chat.openai.com';
@@ -66,8 +72,52 @@ const Index = () => {
     }
   };
 
+  const handleSendMessage = (text: string, isAdmin = false) => {
+    const newMsg: Message = {
+      id: Date.now().toString(),
+      text,
+      sender: isAdmin ? 'admin' : 'user',
+      timestamp: new Date().toLocaleString(),
+      isRead: isAdmin,
+    };
+
+    setMessages(prev => [...prev, newMsg]);
+
+    if (!isAdmin) {
+      // Simulate offline admin response
+      setTimeout(() => {
+        const autoResponse: Message = {
+          id: Date.now().toString(),
+          text: "Thanks for your message! Our admin team is currently offline. We'll get back to you as soon as possible.",
+          sender: 'admin',
+          timestamp: new Date().toLocaleString(),
+          isRead: true,
+        };
+        setMessages(prev => [...prev, autoResponse]);
+      }, 1000);
+    }
+  };
+
+  const handleUserSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newMessage.trim()) {
+      handleSendMessage(newMessage);
+      setNewMessage('');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="p-3 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
+          aria-label="Chat"
+        >
+          <MessageSquare className="w-6 h-6" />
+        </button>
+      </div>
+
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <button
           onClick={() => setIsPasswordDialogOpen(true)}
@@ -188,11 +238,48 @@ const Index = () => {
           <DialogHeader>
             <DialogTitle>Admin Panel</DialogTitle>
             <DialogDescription>
-              View all user feedback
+              Manage feedback and messages
             </DialogDescription>
           </DialogHeader>
           
-          <AdminPanel feedbackList={feedbackList} />
+          <AdminPanel 
+            feedbackList={feedbackList} 
+            messages={messages}
+            onSendMessage={(text) => handleSendMessage(text, true)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Chat with Support</DialogTitle>
+            <DialogDescription>
+              Send us a message and we'll get back to you
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="h-[400px] flex flex-col">
+            <ScrollArea className="flex-1 p-4 border rounded-md mb-4">
+              {messages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+            </ScrollArea>
+            <form onSubmit={handleUserSendMessage} className="flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Send
+              </button>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

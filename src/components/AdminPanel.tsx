@@ -1,8 +1,11 @@
 
 import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Edit2 } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { Edit2, MessageSquare } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ChatMessage, { Message } from './ChatMessage';
+import { Input } from "@/components/ui/input";
 
 interface Feedback {
   rating: number;
@@ -12,11 +15,14 @@ interface Feedback {
 
 interface AdminPanelProps {
   feedbackList: Feedback[];
+  messages: Message[];
+  onSendMessage: (text: string) => void;
 }
 
-const AdminPanel = ({ feedbackList }: AdminPanelProps) => {
+const AdminPanel = ({ feedbackList, messages, onSendMessage }: AdminPanelProps) => {
   const { toast } = useToast();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
 
   const handleEditToggle = () => {
     if (!isEditMode) {
@@ -56,10 +62,18 @@ const AdminPanel = ({ feedbackList }: AdminPanelProps) => {
     }
   };
 
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newMessage.trim()) {
+      onSendMessage(newMessage);
+      setNewMessage('');
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">User Feedback</h2>
+        <h2 className="text-2xl font-bold">Admin Panel</h2>
         <button
           onClick={handleEditToggle}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
@@ -72,28 +86,69 @@ const AdminPanel = ({ feedbackList }: AdminPanelProps) => {
           {isEditMode ? 'Exit Edit Mode' : 'Edit Page Content'}
         </button>
       </div>
-      <ScrollArea className="h-[400px] w-full rounded-md border p-4">
-        {feedbackList.map((item, index) => (
-          <div key={index} className="mb-6 pb-6 border-b last:border-0">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className={`w-5 h-5 ${i < item.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                  </svg>
-                ))}
+
+      <Tabs defaultValue="feedback">
+        <TabsList className="mb-4">
+          <TabsTrigger value="feedback">Feedback</TabsTrigger>
+          <TabsTrigger value="messages" className="flex items-center gap-2">
+            Messages
+            {messages.some(m => !m.isRead && m.sender === 'user') && (
+              <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {messages.filter(m => !m.isRead && m.sender === 'user').length}
+              </span>
+            )}
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="feedback">
+          <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+            {feedbackList.map((item, index) => (
+              <div key={index} className="mb-6 pb-6 border-b last:border-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-5 h-5 ${i < item.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-500">{item.timestamp}</span>
+                </div>
+                <p className="text-gray-700">{item.feedback || 'No comment provided'}</p>
               </div>
-              <span className="text-sm text-gray-500">{item.timestamp}</span>
-            </div>
-            <p className="text-gray-700">{item.feedback || 'No comment provided'}</p>
+            ))}
+          </ScrollArea>
+        </TabsContent>
+
+        <TabsContent value="messages">
+          <div className="h-[400px] flex flex-col">
+            <ScrollArea className="flex-1 p-4 border rounded-md mb-4">
+              {messages.map((message) => (
+                <ChatMessage key={message.id} message={message} />
+              ))}
+            </ScrollArea>
+            <form onSubmit={handleSendMessage} className="flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                className="flex-1"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Send
+              </button>
+            </form>
           </div>
-        ))}
-      </ScrollArea>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
