@@ -1,14 +1,44 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Settings, Home } from 'lucide-react';
+import { Settings, Home, Star, MessageSquare } from 'lucide-react';
 import HeroSection from '@/components/HeroSection';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState('');
 
   const redirectToChatGPT = () => {
     window.location.href = 'https://chat.openai.com';
+  };
+
+  const handleSubmitFeedback = () => {
+    if (rating === 0) {
+      toast({
+        title: "Please select a rating",
+        description: "Select at least one star before submitting",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Here you would typically send the feedback to your backend
+    console.log({ rating, feedback });
+    
+    toast({
+      title: "Thank you for your feedback!",
+      description: "Your feedback has been submitted successfully.",
+    });
+    
+    setIsOpen(false);
+    setRating(0);
+    setFeedback('');
   };
 
   return (
@@ -26,7 +56,7 @@ const Index = () => {
       <HeroSection />
       
       <main className="container px-4 py-16 mx-auto">
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-6">
           <button
             onClick={redirectToChatGPT}
             className="flex items-center gap-3 px-8 py-4 bg-black text-white rounded-lg text-xl font-semibold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-transform duration-200"
@@ -34,8 +64,59 @@ const Index = () => {
             <Home className="w-6 h-6" />
             Home
           </button>
+
+          <button
+            onClick={() => setIsOpen(true)}
+            className="flex items-center gap-2 px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <MessageSquare className="w-5 h-5" />
+            Send Feedback
+          </button>
         </div>
       </main>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Send Feedback</DialogTitle>
+            <DialogDescription>
+              How would you rate your experience?
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex justify-center gap-2 py-4">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => setRating(star)}
+                className="transition-transform hover:scale-110"
+              >
+                <Star
+                  className={`w-8 h-8 ${
+                    star <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+
+          <Textarea
+            placeholder="Tell us about your experience (optional)"
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            className="min-h-[100px]"
+          />
+
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={handleSubmitFeedback}
+              className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              Submit Feedback
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
